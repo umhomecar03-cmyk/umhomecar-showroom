@@ -1140,6 +1140,76 @@ img {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
+
+.quickPasteBox,
+.parsedEditorBox {
+  margin-top: 16px;
+  padding: 15px;
+  border: 1px solid rgba(248, 211, 107, 0.24);
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgba(248, 211, 107, 0.075), rgba(255, 255, 255, 0.045));
+}
+
+.quickPasteHeader,
+.parsedEditorTitle {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.quickPasteHeader h3,
+.parsedEditorTitle h3 {
+  margin: 0;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.quickPasteHeader p,
+.parsedEditorTitle p {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.quickPasteArea {
+  min-height: 280px;
+  line-height: 1.65;
+  font-size: 15px;
+  background: rgba(0, 0, 0, 0.22) !important;
+  border-color: rgba(248, 211, 107, 0.18) !important;
+}
+
+.quickActionRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.parseButton {
+  min-height: 50px;
+  border: 0;
+  border-radius: 16px;
+  color: #171717;
+  font-weight: 950;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #f8d36b, #fbbf24);
+  box-shadow: 0 16px 30px rgba(251, 191, 36, 0.18);
+}
+
+.parsedEditorBox {
+  border-color: rgba(255, 255, 255, 0.13);
+  background: rgba(255, 255, 255, 0.045);
+}
+
 .installmentEditor {
   margin-top: 15px;
   padding: 14px;
@@ -1330,8 +1400,14 @@ img {
   }
 
   .formGridThree,
-  .formGridTwo {
+  .formGridTwo,
+  .quickActionRow {
     grid-template-columns: 1fr;
+  }
+
+  .quickPasteHeader,
+  .parsedEditorTitle {
+    display: grid;
   }
 
   .adminImageGrid {

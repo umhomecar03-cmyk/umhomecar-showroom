@@ -106,6 +106,134 @@ function sanitizeFileName(text = '') {
     .slice(0, 90);
 }
 
+
+function stripDecorations(text = '') {
+  return String(text)
+    .replace(/[🎈🎯🎉⭐️⏰🔥✅📌🚗💰]/g, '')
+    .replace(/[•●▪︎►]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function parseNumberText(text = '') {
+  const cleaned = String(text).replace(/[^0-9]/g, '');
+  return cleaned ? Number(cleaned) : 0;
+}
+
+function normalizeAmountText(text = '') {
+  return String(text)
+    .replace(/บาท|เดือน|\/|:|：/gi, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function makeCarCodeFromParsed(parsed) {
+  const brand = sanitizeFileName(parsed.brand || 'CAR').toUpperCase() || 'CAR';
+  const year = parsed.year || new Date().getFullYear();
+  const plate = sanitizeFileName(parsed.plate || '').toUpperCase().replace(/-/g, '') || String(Date.now()).slice(-5);
+  return `UM-${brand}-${year}-${plate}`.replace(/-+/g, '-');
+}
+
+function parseCarText(rawText = '') {
+  const text = String(rawText || '').replace(/\r/g, '').trim();
+  const lines = text
+    .split('\n')
+    .map((line) => stripDecorations(line))
+    .map((line) => line.replace(/^[-–—]+\s*/, '').trim())
+    .filter(Boolean);
+
+  const skippedPhrases = [
+    'รถสวยมากคันนี้',
+    'ตารางผ่อนแบบฟรีดาวน์',
+    'ระยะการผ่อน',
+  ];
+
+  const titleLine = lines.find((line) => {
+    const lower = line.toLowerCase();
+    return !skippedPhrases.some((phrase) => lower.includes(phrase.toLowerCase())) &&
+      !/^(ราคา|เพียง|ผ่อน|ไมล์|เครื่อง|เกียร์|ทะเบียน|ฟรีดาวน์|\d+\s*ปี)/i.test(line);
+  }) || '';
+
+  const yearMatch = titleLine.match(/ปี\s*(19\d{2}|20\d{2}|25\d{2})/) || text.match(/ปี\s*(19\d{2}|20\d{2}|25\d{2})/);
+  const year = yearMatch ? yearMatch[1] : '';
+
+  const title = stripDecorations(titleLine).replace(/\s+/g, ' ').trim();
+  const titleParts = title.split(/\s+/).filter(Boolean);
+  const brand = titleParts[0] || '';
+  const model = titleParts.slice(1, 3).join(' ');
+
+  const priceMatch = text.match(/(?:ราคา|เพียง)\s*([^\n]*?)([0-9][0-9,\.xX]*)\s*บาท/i);
+  const price = priceMatch ? parseNumberText(priceMatch[2]) : 0;
+
+  const monthlyMatch = text.match(/ผ่อนเริ่มต้น\s*([^\n]*?)([0-9][0-9,\.xX]*)/i);
+  let monthlyStartText = monthlyMatch ? normalizeAmountText(monthlyMatch[2]) : '';
+
+  const installmentRows = [];
+  const installmentRegex = /(^|\n)\s*(\d+)\s*ปี\s*([0-9][0-9,\.xX]*)/gi;
+  let rowMatch;
+  while ((rowMatch = installmentRegex.exec(text))) {
+    installmentRows.push({ years: Number(rowMatch[2]), amountText: normalizeAmountText(rowMatch[3]) });
+  }
+  if (!monthlyStartText && installmentRows.length) {
+    monthlyStartText = installmentRows[installmentRows.length - 1].amountText;
+  }
+
+  const mileageMatch = text.match(/ไมล์\s*([0-9][0-9,\.xX]*)\s*(km|กม\.?|กิโลเมตร)?/i);
+  const mileageText = mileageMatch ? `${normalizeAmountText(mileageMatch[1])} Km` : '';
+
+  const engineMatch = text.match(/(?:เครื่องยนต์|เครื่อง)\s*([0-9][0-9,\.]*)\s*cc/i);
+  const engineText = engineMatch ? `${engineMatch[1].replace(/\s+/g, '')}cc` : '';
+
+  const transmissionLine = lines.find((line) => /^เกียร์/i.test(line));
+  const transmissionText = transmissionLine ? transmissionLine.replace(/^เกียร์\s*/i, 'เกียร์').trim() : '';
+
+  const plateMatch = text.match(/ทะเบียน(?:รถ)?\s*[:：]?\s*([^\n]+)/i);
+  const plate = plateMatch ? stripDecorations(plateMatch[1]) : '';
+
+  const promotionLine = lines.find((line) => /ฟรีดาวน์|ฟรีจัด|ฟรีโอน/i.test(line));
+  const promotion = promotionLine ? stripDecorations(promotionLine) : 'ฟรีดาวน์ ฟรีจัด ฟรีโอน';
+
+  const guaranteeCandidates = lines.filter((line) => /ไม่มีชนหนัก|ไม่น้ำท่วม|กล้าท้า|ช่างศูนย์/i.test(line));
+  const guaranteeText = guaranteeCandidates.length
+    ? guaranteeCandidates.join(' ').replace(/รถสวยมากคันนี้/g, '').replace(/\s+/g, ' ').trim()
+    : 'ไม่มีชนหนัก ไม่น้ำท่วม 100%';
+
+  const featureLines = lines.filter((line) => {
+    if (!line) return false;
+    if (line === title) return false;
+    if (/รถสวยมากคันนี้/i.test(line)) return false;
+    if (/ไม่มีชนหนัก|ไม่น้ำท่วม|กล้าท้า|ช่างศูนย์/i.test(line)) return false;
+    if (/^(ราคา|เพียง|ผ่อนเริ่มต้น|ไมล์|เครื่องยนต์|เครื่อง|เกียร์|ทะเบียน|ตารางผ่อน|ระยะการผ่อน)/i.test(line)) return false;
+    if (/^\d+\s*ปี\s*/i.test(line)) return false;
+    if (/ฟรีดาวน์|ฟรีจัด|ฟรีโอน/i.test(line)) return false;
+    return true;
+  });
+
+  const parsed = {
+    carCode: '',
+    title,
+    brand,
+    model,
+    year,
+    price,
+    monthlyStartText,
+    mileageText,
+    engineText,
+    transmissionText,
+    plate,
+    promotion,
+    guaranteeText,
+    installments: [4, 5, 6, 7].map((years) => {
+      const found = installmentRows.find((row) => row.years === years);
+      return { years, amountText: found?.amountText || '' };
+    }),
+    featuresText: featureLines.join('\n'),
+  };
+
+  parsed.carCode = makeCarCodeFromParsed(parsed);
+  return parsed;
+}
+
 function dbCarToForm(car) {
   return {
     ...EMPTY_FORM,
@@ -744,6 +872,7 @@ function AdminDashboard({ session }) {
   const [cars, setCars] = useState([]);
   const [form, setForm] = useState(EMPTY_FORM);
   const [selectedFiles, setSelectedFiles] = useState([]);
+  const [rawCarText, setRawCarText] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState('');
@@ -782,12 +911,53 @@ function AdminDashboard({ session }) {
   function resetForm() {
     setForm(EMPTY_FORM);
     setSelectedFiles([]);
+    setRawCarText('');
     setMessage('');
     setError('');
   }
 
+  function fillExampleText() {
+    setRawCarText(`Isuzu MU-X 1.9 Active 2WD AT ปี 2023
+
+ราคา 829,000 บาท
+ผ่อนเริ่มต้น 13,xxx บาท / เดือน
+
+ไมล์ 95,xxx Km
+เครื่องยนต์ 1,900cc
+เกียร์อัตโนมัติ 6AT
+
+ตารางผ่อนแบบฟรีดาวน์ :
+4 ปี 20,xxx
+5 ปี 16,xxx
+6 ปี 15,xxx
+7 ปี 13,xxx
+ทะเบียนรถ : XX-XXXX`);
+  }
+
+  function handleParseCarText() {
+    if (!rawCarText.trim()) {
+      setError('กรุณาวางข้อมูลรถก่อนกดแยกข้อมูลครับ');
+      setMessage('');
+      return;
+    }
+
+    const parsed = parseCarText(rawCarText);
+    setForm((current) => ({
+      ...current,
+      ...parsed,
+      dbId: current.dbId,
+      status: current.status || 'available',
+      sortOrder: current.sortOrder || 0,
+      images: current.images || [],
+      carCode: current.dbId ? (current.carCode || parsed.carCode) : parsed.carCode,
+    }));
+    setError('');
+    setMessage('แยกข้อมูลเรียบร้อยครับ ตรวจสอบอีกครั้งแล้วกดบันทึกได้เลย');
+  }
+
   function editCar(car) {
     setForm(dbCarToForm(car));
+    setRawCarText('');
     setSelectedFiles([]);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -906,6 +1076,53 @@ function AdminDashboard({ session }) {
           {message && <div className="adminSuccess">{message}</div>}
           {error && <div className="adminError">{error}</div>}
 
+          <section className="quickPasteBox">
+            <div className="quickPasteHeader">
+              <div>
+                <h3><Sparkles size={18} /> วางข้อมูลรถช่องเดียว</h3>
+                <p>ใช้แพทเทิร์นเดิมได้เลย ระบบจะตัดคำขายเกินจำเป็น เช่น “รถสวยมากคันนี้” แล้วแยกข้อมูลให้อัตโนมัติ</p>
+              </div>
+              <button type="button" className="adminGhostButton" onClick={fillExampleText}>ใส่ตัวอย่าง</button>
+            </div>
+
+            <textarea
+              className="quickPasteArea"
+              value={rawCarText}
+              onChange={(event) => setRawCarText(event.target.value)}
+              rows={12}
+              placeholder={`วางข้อมูลรถตรงนี้ เช่น
+
+Isuzu MU-X 1.9 Active 2WD AT ปี 2023
+
+ราคา 829,000 บาท
+ผ่อนเริ่มต้น 13,xxx บาท / เดือน
+
+ไมล์ 95,xxx Km
+เครื่องยนต์ 1,900cc
+เกียร์อัตโนมัติ 6AT
+
+ตารางผ่อนแบบฟรีดาวน์ :
+4 ปี 20,xxx
+5 ปี 16,xxx
+6 ปี 15,xxx
+7 ปี 13,xxx
+ทะเบียนรถ : XX-XXXX`}
+            />
+
+            <div className="quickActionRow">
+              <button type="button" className="parseButton" onClick={handleParseCarText}>
+                <Sparkles size={18} /> แยกข้อมูลอัตโนมัติ
+              </button>
+              <button type="button" className="adminGhostButton" onClick={() => setRawCarText('')}>ล้างข้อความ</button>
+            </div>
+          </section>
+
+          <section className="parsedEditorBox">
+            <div className="parsedEditorTitle">
+              <h3>ข้อมูลที่ระบบแยกให้</h3>
+              <p>ตรวจแก้ได้ก่อนกดบันทึก โดยเฉพาะรหัสรถ ราคา และทะเบียน</p>
+            </div>
+
           <div className="formGridTwo">
             <label>
               รหัสรถ
@@ -1000,6 +1217,8 @@ function AdminDashboard({ session }) {
             รายการออปชัน / จุดเด่น ใส่บรรทัดละ 1 รายการ
             <textarea value={form.featuresText} onChange={(e) => updateForm('featuresText', e.target.value)} rows={5} placeholder={'ถุงลมนิรภัย เบรก ABS/EBD\nApple CarPlay\nกล้องมองภาพขณะถอยจอด'} />
           </label>
+
+          </section>
 
           <section className="imageAdminBox">
             <h3><ImagePlus size={18} /> รูปรถ</h3>
