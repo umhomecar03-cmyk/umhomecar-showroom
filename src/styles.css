@@ -64,6 +64,13 @@ img {
 
 .modalOpen {
   overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: none;
+}
+
+.modalOpen .filterGrid,
+.modalOpen .detailPage {
+  touch-action: pan-y;
 }
 
 .appShell {
@@ -288,11 +295,11 @@ img {
 .filterSheetBackdrop {
   position: fixed;
   inset: 0;
-  z-index: 70;
+  z-index: 120;
   border: 0;
   border-radius: 0;
-  background: rgba(0, 0, 0, 0.58);
-  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(10px);
 }
 
 .filterSheetTop {
@@ -905,20 +912,21 @@ img {
 
   .filterGrid {
     position: fixed;
-    left: var(--safe-left);
-    right: var(--safe-right);
-    bottom: 0;
-    z-index: 80;
-    padding: 16px 16px calc(16px + var(--safe-bottom));
-    border-radius: 26px 26px 0 0;
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    border-bottom: 0;
-    background: rgba(18, 18, 23, 0.98);
-    box-shadow: 0 -28px 90px rgba(0, 0, 0, 0.48);
-    backdrop-filter: blur(20px);
-    transform: translateY(108%);
-    transition: transform 0.22s ease;
-    max-height: min(74vh, 560px);
+    left: calc(10px + var(--safe-left));
+    right: calc(10px + var(--safe-right));
+    bottom: calc(10px + var(--safe-bottom));
+    z-index: 140;
+    padding: 14px 14px 16px;
+    border-radius: 28px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background:
+      linear-gradient(180deg, rgba(32, 32, 39, 0.99), rgba(14, 14, 18, 0.99)),
+      rgba(18, 18, 23, 0.99);
+    box-shadow: 0 -22px 90px rgba(0, 0, 0, 0.62);
+    backdrop-filter: blur(22px);
+    transform: translateY(calc(100% + 28px + var(--safe-bottom)));
+    transition: transform 0.24s cubic-bezier(.2,.8,.2,1);
+    max-height: min(70dvh, 560px);
     overflow: auto;
     overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
@@ -929,15 +937,30 @@ img {
   }
 
   .filterSheetTop {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+  }
+
+  .filterSheetTop::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 2px;
+    width: 42px;
+    height: 4px;
+    border-radius: 999px;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.22);
   }
 
   .filterSheetTop strong {
     font-size: 18px;
+    padding-top: 14px;
   }
 
   .compactIconButton {
@@ -945,6 +968,27 @@ img {
     height: 42px;
     min-height: 42px;
     border-radius: 14px;
+  }
+
+
+  .filterGrid label {
+    font-size: 14px;
+  }
+
+  .filterGrid select {
+    border-radius: 18px;
+    padding: 13px 44px 13px 14px;
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: #15151b;
+    background-image:
+      linear-gradient(45deg, transparent 50%, rgba(255, 255, 255, 0.72) 50%),
+      linear-gradient(135deg, rgba(255, 255, 255, 0.72) 50%, transparent 50%);
+    background-position:
+      calc(100% - 22px) 50%,
+      calc(100% - 16px) 50%;
+    background-size: 6px 6px, 6px 6px;
+    background-repeat: no-repeat;
   }
 
   .applyFilterButton {

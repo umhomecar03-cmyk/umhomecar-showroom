@@ -493,6 +493,12 @@ function Toolbar({
 }) {
   const [filtersOpen, setFiltersOpen] = useState(false);
 
+  useEffect(() => {
+    if (!filtersOpen) return undefined;
+    document.body.classList.add('modalOpen');
+    return () => document.body.classList.remove('modalOpen');
+  }, [filtersOpen]);
+
   return (
     <section className="toolbarCard">
       <div className="searchBox">
