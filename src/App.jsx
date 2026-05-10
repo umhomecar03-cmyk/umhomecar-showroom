@@ -493,11 +493,7 @@ function Toolbar({
 }) {
   const [filtersOpen, setFiltersOpen] = useState(false);
 
-  useEffect(() => {
-    if (!filtersOpen) return undefined;
-    document.body.classList.add('modalOpen');
-    return () => document.body.classList.remove('modalOpen');
-  }, [filtersOpen]);
+  // Mobile filters are rendered inline, so we do not lock the page scroll here.
 
   return (
     <section className="toolbarCard">

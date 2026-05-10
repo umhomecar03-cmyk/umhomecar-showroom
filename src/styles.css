@@ -1650,3 +1650,267 @@ img {
     height: 70px;
   }
 }
+
+/* Mobile UX patch: one2car-style compact list + inline filters, no overlay blocking content */
+@media (max-width: 699px) {
+  body {
+    background: linear-gradient(180deg, #08080a 0%, #111113 45%, #08080a 100%);
+  }
+
+  .hero {
+    padding: 12px max(14px, var(--safe-right)) 18px max(14px, var(--safe-left));
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .topNav {
+    gap: 10px;
+  }
+
+  .brandMark {
+    width: 48px;
+    height: 48px;
+    border-radius: 16px;
+  }
+
+  .livePill {
+    min-height: 40px;
+    max-width: 68%;
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+
+  .heroContent {
+    margin-top: 22px;
+  }
+
+  .eyebrow {
+    font-size: 13px;
+    margin-bottom: 8px;
+  }
+
+  .hero h1 {
+    font-size: clamp(34px, 12vw, 48px);
+    line-height: 1.06;
+    letter-spacing: -0.065em;
+  }
+
+  .hero p {
+    margin-top: 12px;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  .statRow {
+    margin-top: 18px;
+    gap: 10px;
+  }
+
+  .statCard {
+    min-height: 92px;
+    padding: 14px 12px;
+    border-radius: 20px;
+  }
+
+  .statCard strong {
+    font-size: 32px;
+  }
+
+  .contentWrap {
+    padding: 12px max(12px, var(--safe-right)) 20px max(12px, var(--safe-left));
+  }
+
+  .toolbarCard {
+    position: relative;
+    top: auto;
+    z-index: 2;
+    margin: 0;
+    padding: 12px;
+    border-radius: 24px;
+    background: rgba(18, 18, 23, 0.92);
+    box-shadow: 0 16px 44px rgba(0, 0, 0, 0.28);
+    backdrop-filter: blur(14px);
+  }
+
+  .searchBox {
+    min-height: 58px;
+    border-radius: 20px;
+    padding: 12px 14px;
+  }
+
+  .searchBox input {
+    font-size: 16px;
+  }
+
+  .mobileFilterButton {
+    min-height: 54px;
+    border-radius: 18px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.105), rgba(255,255,255,0.055));
+  }
+
+  .filterSheetBackdrop {
+    display: none !important;
+  }
+
+  .filterGrid {
+    display: none !important;
+    position: static !important;
+    inset: auto !important;
+    z-index: auto !important;
+    transform: none !important;
+    max-height: none !important;
+    overflow: visible !important;
+    margin-top: 12px;
+    padding: 14px;
+    border-radius: 22px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(10, 10, 14, 0.94);
+    box-shadow: none;
+    backdrop-filter: none;
+  }
+
+  .filterGrid.mobileSheetOpen {
+    display: grid !important;
+  }
+
+  .filterSheetTop {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 0 8px;
+    padding: 0;
+  }
+
+  .filterSheetTop::before {
+    display: none;
+  }
+
+  .filterSheetTop strong {
+    padding-top: 0;
+    font-size: 18px;
+  }
+
+  .filterGrid label {
+    font-size: 13px;
+  }
+
+  .filterGrid select {
+    min-height: 52px;
+    border-radius: 16px;
+    background-color: #17171d;
+  }
+
+  .applyFilterButton {
+    display: inline-flex;
+    min-height: 52px;
+    border-radius: 16px;
+  }
+
+  .carGrid {
+    gap: 14px;
+    margin-top: 14px;
+  }
+
+  .carCard {
+    display: grid;
+    grid-template-columns: 43% 57%;
+    min-height: 210px;
+    border-radius: 18px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.09), rgba(255,255,255,0.045));
+    border-color: rgba(255,255,255,0.15);
+  }
+
+  .carImageWrap {
+    height: 100%;
+    min-height: 210px;
+    aspect-ratio: auto;
+    border-radius: 18px 0 0 18px;
+  }
+
+  .carImageWrap img {
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .statusBadge {
+    left: 9px;
+    top: 9px;
+    padding: 5px 8px;
+    font-size: 10px;
+  }
+
+  .carCardBody {
+    min-width: 0;
+    padding: 12px 12px 12px 13px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .idLine {
+    margin-bottom: 5px;
+    font-size: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .carCard h2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-size: 15px;
+    line-height: 1.3;
+  }
+
+  .priceLine {
+    margin-top: 8px;
+    font-size: 24px;
+    color: #ffffff;
+  }
+
+  .monthlyLine {
+    margin-top: 2px;
+    font-size: 12px;
+    line-height: 1.35;
+  }
+
+  .quickSpecGrid {
+    grid-template-columns: 1fr;
+    gap: 6px;
+    margin: 9px 0 10px;
+  }
+
+  .quickSpecGrid span {
+    min-height: 30px;
+    padding: 6px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .primaryButton {
+    margin-top: auto;
+    min-height: 46px;
+    border-radius: 13px;
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 370px) {
+  .carCard {
+    grid-template-columns: 1fr;
+  }
+
+  .carImageWrap {
+    border-radius: 18px 18px 0 0;
+    aspect-ratio: 4 / 3;
+    min-height: 0;
+  }
+
+  .quickSpecGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
