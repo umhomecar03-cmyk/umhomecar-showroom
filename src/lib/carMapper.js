@@ -1,0 +1,50 @@
+export function mapDbCar(row) {
+  return {
+    dbId: row.id,
+    id: row.car_code || row.id,
+    carCode: row.car_code || row.id,
+    status: row.status || 'available',
+    title: row.title || '',
+    brand: row.brand || '',
+    model: row.model || '',
+    year: row.car_year || '',
+    price: Number(row.price || 0),
+    monthlyStartText: row.monthly_start_text || '',
+    mileageText: row.mileage_text || '',
+    engineText: row.engine_text || '',
+    transmissionText: row.transmission_text || '',
+    plate: row.plate || '',
+    promotion: row.promotion || '',
+    guaranteeText: row.guarantee_text || '',
+    installments: Array.isArray(row.installments) ? row.installments : [],
+    features: Array.isArray(row.features) ? row.features : [],
+    images: Array.isArray(row.images) ? row.images : [],
+    sortOrder: Number(row.sort_order || 0),
+    viewsCount: Number(row.views_count || 0),
+    updatedAt: row.updated_at || row.created_at || '',
+    viewsText: row.views_count ? `มีคนเปิดดูแล้ว ${row.views_count} ครั้ง` : 'มีลูกค้าสนใจหลายคน',
+  };
+}
+
+export function mapCarToDb(car) {
+  return {
+    car_code: car.carCode || car.id,
+    title: car.title || '',
+    brand: car.brand || '',
+    model: car.model || '',
+    car_year: Number(car.year || 0) || null,
+    price: Number(car.price || 0),
+    monthly_start_text: car.monthlyStartText || '',
+    mileage_text: car.mileageText || '',
+    engine_text: car.engineText || '',
+    transmission_text: car.transmissionText || '',
+    plate: car.plate || '',
+    promotion: car.promotion || '',
+    guarantee_text: car.guaranteeText || '',
+    installments: car.installments || [],
+    features: car.features || [],
+    images: car.images || [],
+    status: car.status || 'available',
+    sort_order: Number(car.sortOrder || 0),
+  };
+}

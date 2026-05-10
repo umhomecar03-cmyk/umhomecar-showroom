@@ -909,3 +909,460 @@ img {
     align-self: center;
   }
 }
+
+.statusHidden {
+  background: linear-gradient(135deg, #52525b, #27272a);
+}
+
+.warningBox {
+  margin: 0 0 14px;
+  padding: 13px 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(248, 211, 107, 0.34);
+  background: rgba(248, 211, 107, 0.09);
+  color: #fde68a;
+  font-weight: 750;
+  line-height: 1.55;
+}
+
+.spinIcon {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.adminShell {
+  min-height: 100vh;
+  padding: 18px;
+  background:
+    radial-gradient(circle at 10% 0%, rgba(225, 29, 72, 0.28), transparent 34%),
+    radial-gradient(circle at 88% 5%, rgba(248, 113, 113, 0.14), transparent 28%),
+    linear-gradient(180deg, #09090b 0%, #121216 100%);
+  color: var(--text);
+}
+
+.wideAdminShell {
+  padding: 18px;
+}
+
+.adminCard {
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  background: rgba(18, 18, 23, 0.92);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(18px);
+  padding: 18px;
+}
+
+.narrowCard {
+  width: min(450px, 100%);
+  margin: 8vh auto 0;
+}
+
+.centerCard {
+  text-align: center;
+}
+
+.adminLogo {
+  width: 54px;
+  height: 54px;
+  display: grid;
+  place-items: center;
+  border-radius: 20px;
+  background: linear-gradient(145deg, #ef4444, #7f1d1d 55%, #111113);
+  box-shadow: 0 16px 38px rgba(225, 29, 72, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.24);
+  font-weight: 950;
+  margin-bottom: 16px;
+}
+
+.adminCard h1,
+.adminCard h2,
+.adminTopbar h1 {
+  margin: 0;
+  letter-spacing: -0.04em;
+}
+
+.adminCard h1 {
+  font-size: 30px;
+}
+
+.adminCard h2,
+.adminTopbar h1 {
+  font-size: 28px;
+}
+
+.adminCard p,
+.adminTopbar p {
+  color: var(--muted);
+  line-height: 1.6;
+  margin: 7px 0 0;
+}
+
+.adminCard code {
+  display: block;
+  margin-top: 10px;
+  padding: 11px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fde68a;
+  word-break: break-all;
+}
+
+.adminCard label {
+  display: grid;
+  gap: 7px;
+  color: #d4d4d8;
+  font-size: 13px;
+  font-weight: 800;
+  margin-top: 13px;
+}
+
+.adminCard input,
+.adminCard select,
+.adminCard textarea {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  outline: 0;
+  color: var(--text);
+  border-radius: 16px;
+  padding: 12px 13px;
+  background: #17171d;
+  resize: vertical;
+}
+
+.adminPrimaryButton,
+.adminGhostButton {
+  min-height: 46px;
+  border-radius: 16px;
+  padding: 11px 14px;
+  font-weight: 900;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.adminPrimaryButton {
+  width: 100%;
+  border: 0;
+  color: white;
+  margin-top: 16px;
+  background: linear-gradient(135deg, var(--red), #991b1b);
+  box-shadow: 0 16px 28px rgba(225, 29, 72, 0.24);
+}
+
+.adminPrimaryButton:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.adminGhostButton {
+  border: 1px solid var(--line);
+  color: white;
+  background: rgba(255, 255, 255, 0.08);
+  text-decoration: none;
+}
+
+.adminError,
+.adminSuccess {
+  margin-top: 14px;
+  padding: 12px 13px;
+  border-radius: 16px;
+  line-height: 1.55;
+  font-weight: 800;
+}
+
+.adminError {
+  border: 1px solid rgba(239, 68, 68, 0.36);
+  background: rgba(239, 68, 68, 0.13);
+  color: #fecaca;
+}
+
+.adminSuccess {
+  border: 1px solid rgba(34, 197, 94, 0.32);
+  background: rgba(34, 197, 94, 0.13);
+  color: #bbf7d0;
+}
+
+.adminTopbar {
+  width: min(1280px, 100%);
+  margin: 0 auto 18px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.adminBadge {
+  display: inline-flex;
+  margin-bottom: 8px;
+  color: var(--gold);
+  font-weight: 900;
+}
+
+.adminTopActions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.adminGridLayout {
+  width: min(1280px, 100%);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(340px, 0.8fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.formHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.formGridTwo,
+.formGridThree {
+  display: grid;
+  gap: 12px;
+}
+
+.formGridTwo {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.formGridThree {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.installmentEditor {
+  margin-top: 15px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.installmentEditor h3,
+.imageAdminBox h3 {
+  margin: 0 0 10px;
+  font-size: 16px;
+}
+
+.installmentEditRow {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 10px;
+  margin-top: 9px;
+}
+
+.imageAdminBox {
+  margin-top: 15px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.imageAdminBox h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.fileDrop {
+  min-height: 104px;
+  display: grid !important;
+  place-items: center;
+  text-align: center;
+  gap: 8px !important;
+  border: 1px dashed rgba(255, 255, 255, 0.26);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.06);
+  cursor: pointer;
+}
+
+.fileDrop input {
+  display: none;
+}
+
+.selectedFileText {
+  color: #fde68a !important;
+  font-weight: 800;
+}
+
+.adminImageGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.adminImageItem {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.adminImageItem img {
+  width: 100%;
+  aspect-ratio: 1 / 0.78;
+  object-fit: cover;
+}
+
+.adminImageItem button {
+  width: 100%;
+  border: 0;
+  padding: 9px;
+  background: rgba(239, 68, 68, 0.16);
+  color: #fecaca;
+  font-size: 12px;
+  font-weight: 850;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.saveButton {
+  min-height: 54px;
+}
+
+.adminEmpty {
+  padding: 24px 10px;
+  text-align: center;
+  color: var(--muted);
+  display: grid;
+  place-items: center;
+  gap: 10px;
+}
+
+.adminCarList {
+  display: grid;
+  gap: 12px;
+  max-height: calc(100vh - 180px);
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.adminCarRow {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 12px;
+  padding: 10px;
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.adminCarRow img {
+  width: 96px;
+  height: 78px;
+  border-radius: 16px;
+  object-fit: cover;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.adminCarRow h3 {
+  margin: 6px 0 4px;
+  font-size: 15px;
+  line-height: 1.35;
+}
+
+.adminCarRow p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.miniStatus {
+  display: inline-flex;
+  border-radius: 999px;
+  padding: 5px 8px;
+  color: white;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.rowActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.rowActions button {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  color: white;
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.08);
+  font-weight: 850;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rowActions .dangerTiny {
+  color: #fecaca;
+  background: rgba(239, 68, 68, 0.13);
+}
+
+@media (max-width: 920px) {
+  .adminTopbar,
+  .adminGridLayout {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .adminTopActions {
+    justify-content: stretch;
+  }
+
+  .adminTopActions .adminGhostButton {
+    flex: 1;
+  }
+
+  .formGridThree,
+  .formGridTwo {
+    grid-template-columns: 1fr;
+  }
+
+  .adminImageGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .adminCarList {
+    max-height: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .adminShell {
+    padding: 12px;
+  }
+
+  .adminCard {
+    border-radius: 22px;
+    padding: 14px;
+  }
+
+  .formHeader {
+    display: grid;
+  }
+
+  .adminCarRow {
+    grid-template-columns: 82px 1fr;
+  }
+
+  .adminCarRow img {
+    width: 82px;
+    height: 70px;
+  }
+}
