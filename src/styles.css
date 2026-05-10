@@ -1066,7 +1066,8 @@ img {
 }
 
 .adminError,
-.adminSuccess {
+.adminSuccess,
+.adminInfo {
   margin-top: 14px;
   padding: 12px 13px;
   border-radius: 16px;
@@ -1084,6 +1085,15 @@ img {
   border: 1px solid rgba(34, 197, 94, 0.32);
   background: rgba(34, 197, 94, 0.13);
   color: #bbf7d0;
+}
+
+.adminInfo {
+  border: 1px solid rgba(234, 179, 8, 0.38);
+  background: rgba(234, 179, 8, 0.12);
+  color: #fde68a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .adminTopbar {

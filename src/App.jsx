@@ -875,6 +875,7 @@ function AdminDashboard({ session }) {
   const [rawCarText, setRawCarText] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [saveStep, setSaveStep] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
@@ -908,11 +909,12 @@ function AdminDashboard({ session }) {
     });
   }
 
-  function resetForm() {
+  function resetForm({ keepMessage = false } = {}) {
     setForm(EMPTY_FORM);
     setSelectedFiles([]);
     setRawCarText('');
-    setMessage('');
+    setSaveStep('');
+    if (!keepMessage) setMessage('');
     setError('');
   }
 
@@ -972,11 +974,15 @@ function AdminDashboard({ session }) {
       const safeName = sanitizeFileName(file.name.replace(/\.[^/.]+$/, ''));
       const path = `${safeCode}/${Date.now()}-${Math.random().toString(16).slice(2)}-${safeName}.${ext}`;
 
+      setSaveStep(`กำลังอัปโหลดรูป ${urls.length + 1}/${selectedFiles.length} ...`);
+
       const { error: uploadError } = await supabase.storage
         .from('car-images')
         .upload(path, file, { upsert: false, contentType: file.type });
 
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        throw new Error(`อัปโหลดรูปไม่สำเร็จ: ${uploadError.message}`);
+      }
 
       const { data } = supabase.storage.from('car-images').getPublicUrl(path);
       urls.push(data.publicUrl);
@@ -987,6 +993,10 @@ function AdminDashboard({ session }) {
 
   async function handleSave(event) {
     event.preventDefault();
+    if (!supabase) {
+      setError('ยังไม่ได้เชื่อม Supabase กรุณาตรวจ Environment Variables ใน Vercel');
+      return;
+    }
     if (!form.carCode.trim()) {
       setError('กรุณากรอกรหัสรถ เช่น UM-MUX-2023-001');
       return;
@@ -999,28 +1009,62 @@ function AdminDashboard({ session }) {
     setIsSaving(true);
     setError('');
     setMessage('');
+    setSaveStep('กำลังบันทึกข้อมูลรถเข้าฐานข้อมูล...');
 
     try {
-      const uploadedUrls = await uploadImages(form.carCode);
-      const carForDb = formToCar({ ...form, images: [...(form.images || []), ...uploadedUrls] });
-      const payload = mapCarToDb(carForDb);
+      const baseCarForDb = formToCar(form);
+      const basePayload = mapCarToDb(baseCarForDb);
+      let savedRow = null;
+      let successText = '';
 
       if (form.dbId) {
-        const { error: updateError } = await supabase.from('cars').update(payload).eq('id', form.dbId);
+        const { data, error: updateError } = await supabase
+          .from('cars')
+          .update(basePayload)
+          .eq('id', form.dbId)
+          .select('*')
+          .single();
         if (updateError) throw updateError;
-        setMessage('แก้ไขข้อมูลรถเรียบร้อยครับ');
+        savedRow = data;
+        successText = `✅ แก้ไขข้อมูลรถสำเร็จแล้ว: ${form.carCode}`;
       } else {
-        const { error: insertError } = await supabase.from('cars').insert(payload);
+        const { data, error: insertError } = await supabase
+          .from('cars')
+          .insert(basePayload)
+          .select('*')
+          .single();
         if (insertError) throw insertError;
-        setMessage('เพิ่มรถใหม่เรียบร้อยครับ');
+        savedRow = data;
+        successText = `✅ เพิ่มรถใหม่สำเร็จแล้ว: ${form.carCode}`;
       }
 
-      resetForm();
+      let uploadedUrls = [];
+      if (selectedFiles.length) {
+        try {
+          uploadedUrls = await uploadImages(form.carCode);
+          if (uploadedUrls.length) {
+            setSaveStep('กำลังผูกรูปเข้ากับรถ...');
+            const nextImages = [...(form.images || []), ...uploadedUrls];
+            const { error: imageUpdateError } = await supabase
+              .from('cars')
+              .update({ images: nextImages })
+              .eq('id', savedRow.id);
+            if (imageUpdateError) throw imageUpdateError;
+            successText += ` และอัปโหลดรูป ${uploadedUrls.length} รูปแล้ว`;
+          }
+        } catch (imageError) {
+          successText += ` แต่รูปยังไม่ถูกอัปโหลด (${imageError.message})`;
+        }
+      }
+
+      setMessage(successText);
+      resetForm({ keepMessage: true });
       await loadAdminCars();
     } catch (saveError) {
       console.error(saveError);
-      setError(saveError.message || 'บันทึกข้อมูลไม่สำเร็จ');
+      setError(`❌ บันทึกไม่สำเร็จ: ${saveError.message || 'ไม่ทราบสาเหตุ'} `);
     } finally {
+      setSaveStep('');
       setIsSaving(false);
     }
   }
@@ -1073,6 +1117,7 @@ function AdminDashboard({ session }) {
             <button type="button" className="adminGhostButton" onClick={resetForm}><Plus size={17} /> เคลียร์ฟอร์ม</button>
           </div>
 
+          {saveStep && <div className="adminInfo"><RefreshCw className="spinIcon" /> {saveStep}</div>}
           {message && <div className="adminSuccess">{message}</div>}
           {error && <div className="adminError">{error}</div>}
 
