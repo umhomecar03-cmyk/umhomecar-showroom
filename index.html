@@ -2,10 +2,89 @@
 <html lang="th">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#09090b" />
+
+    <!-- Mobile viewport: viewport-fit=cover รองรับ notch / Dynamic Island ของ iPhone -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=5.0" />
+
+    <!-- สีแถบ status bar บนมือถือ แยกตามโหมดมืด/สว่างของเครื่อง -->
+    <meta name="theme-color" content="#09090b" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+
+    <!-- iOS: เปิดจาก Add to Home Screen แล้วดูคล้ายแอป -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="อัมโฮมคาร์" />
+
+    <!-- กัน Safari iOS เดาเบอร์/ที่อยู่/อีเมลผิดจากเลขไมล์, cc, ทะเบียน -->
+    <meta name="format-detection" content="telephone=no, address=no, email=no" />
+
+    <title>โชว์รูมออนไลน์ อัมโฮมคาร์ | รถมือสอง พร้อมราคาและตารางผ่อน</title>
     <meta name="description" content="โชว์รูมออนไลน์ อัมโฮมคาร์ ดูรถพร้อมขาย ราคา ตารางผ่อน และบันทึกรูปรถเพื่อส่งให้เซลส์" />
-    <title>โชว์รูมออนไลน์ อัมโฮมคาร์</title>
+
+    <!-- Open Graph: ให้ LINE / Facebook / Messenger ขึ้นการ์ดสวยเวลาแชร์ลิงก์ -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="อัมโฮมคาร์" />
+    <meta property="og:title" content="โชว์รูมออนไลน์ อัมโฮมคาร์" />
+    <meta property="og:description" content="ดูรถพร้อมขาย ราคา ตารางผ่อน บันทึกรูปรถส่งให้เซลส์ได้ทันที" />
+    <meta property="og:image" content="https://umhomecar-showroom.vercel.app/og-cover.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="th_TH" />
+
+    <!-- Twitter / X card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="โชว์รูมออนไลน์ อัมโฮมคาร์" />
+    <meta name="twitter:description" content="ดูรถพร้อมขาย ราคา ตารางผ่อน บันทึกรูปรถส่งให้เซลส์ได้ทันที" />
+    <meta name="twitter:image" content="https://umhomecar-showroom.vercel.app/og-cover.jpg" />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <!-- Preconnect Supabase: ลด latency ตอนเปิดครั้งแรกบนมือถือ -->
+    <link rel="preconnect" href="https://ovunceyqmtdchymuewlj.supabase.co" crossorigin />
+
+    <!-- Font ภาษาไทยให้หน้าตาสม่ำเสมอทุกมือถือ -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- กันจอกระพริบขาวก่อน React โหลด + รองรับ safe area -->
+    <style>
+      :root {
+        color-scheme: dark light;
+        --safe-top: env(safe-area-inset-top, 0px);
+        --safe-right: env(safe-area-inset-right, 0px);
+        --safe-bottom: env(safe-area-inset-bottom, 0px);
+        --safe-left: env(safe-area-inset-left, 0px);
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        min-height: 100%;
+        background-color: #09090b;
+        color: #f4f4f5;
+        font-family: 'IBM Plex Sans Thai', system-ui, -apple-system, 'Segoe UI', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: geometricPrecision;
+        -webkit-tap-highlight-color: transparent;
+        overscroll-behavior-y: none;
+      }
+      body {
+        padding-top: var(--safe-top);
+        padding-right: var(--safe-right);
+        padding-bottom: var(--safe-bottom);
+        padding-left: var(--safe-left);
+      }
+      #root {
+        min-height: 100vh;
+        background-color: #09090b;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>

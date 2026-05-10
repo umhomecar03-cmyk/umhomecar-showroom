@@ -418,8 +418,8 @@ function ShowroomApp() {
           </div>
         ) : (
           <div className="carGrid" aria-live="polite">
-            {filteredCars.map((car) => (
-              <CarCard key={car.dbId || car.id} car={car} onOpen={() => openCar(car)} />
+            {filteredCars.map((car, index) => (
+              <CarCard key={car.dbId || car.id} car={car} priority={index === 0} onOpen={() => openCar(car)} />
             ))}
           </div>
         )}
@@ -491,6 +491,8 @@ function Toolbar({
   setPriceRange,
   resultCount,
 }) {
+  const [filtersOpen, setFiltersOpen] = useState(false);
+
   return (
     <section className="toolbarCard">
       <div className="searchBox">
@@ -499,17 +501,34 @@ function Toolbar({
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="ค้นหารุ่นรถ / ยี่ห้อ / ปี / ทะเบียน"
+          inputMode="search"
+          enterKeyHint="search"
+          autoComplete="off"
+          spellCheck="false"
         />
       </div>
 
-      <div className="filterHeader">
+      <button type="button" className="mobileFilterButton" onClick={() => setFiltersOpen(true)}>
+        <SlidersHorizontal size={17} /> ตัวกรอง <span>{resultCount} คัน</span>
+      </button>
+
+      <div className="filterHeader" aria-hidden="true">
         <div>
           <SlidersHorizontal size={17} /> ตัวกรอง
         </div>
         <span>{resultCount} คัน</span>
       </div>
 
-      <div className="filterGrid">
+      {filtersOpen && <button type="button" className="filterSheetBackdrop" aria-label="ปิดตัวกรอง" onClick={() => setFiltersOpen(false)} />}
+
+      <div className={`filterGrid ${filtersOpen ? 'mobileSheetOpen' : ''}`}>
+        <div className="filterSheetTop">
+          <strong>ตัวกรองรถ</strong>
+          <button type="button" className="iconButton compactIconButton" onClick={() => setFiltersOpen(false)} aria-label="ปิดตัวกรอง">
+            <X size={18} />
+          </button>
+        </div>
+
         <label>
           ยี่ห้อ
           <select value={brand} onChange={(event) => setBrand(event.target.value)}>
@@ -540,16 +559,26 @@ function Toolbar({
             <option value="gt800">มากกว่า 800,000</option>
           </select>
         </label>
+
+        <button type="button" className="applyFilterButton" onClick={() => setFiltersOpen(false)}>
+          ใช้ตัวกรอง
+        </button>
       </div>
     </section>
   );
 }
 
-function CarCard({ car, onOpen }) {
+function CarCard({ car, onOpen, priority = false }) {
   return (
     <article className="carCard" onClick={onOpen} role="button" tabIndex={0} onKeyDown={(e) => e.key === 'Enter' && onOpen()}>
       <div className="carImageWrap">
-        <img src={getMainImage(car)} alt={car.title} loading="lazy" />
+        <img
+          src={getMainImage(car)}
+          alt={car.title}
+          loading={priority ? 'eager' : 'lazy'}
+          decoding="async"
+          fetchPriority={priority ? 'high' : 'auto'}
+        />
         <div className={`statusBadge ${STATUS_CLASS[car.status]}`}>{STATUS_LABEL[car.status] || car.status}</div>
       </div>
 
@@ -654,7 +683,7 @@ function CarDetail({ car, onClose, setToast }) {
         </div>
 
         <div className="detailHeroImage">
-          <img src={car.images?.[activeImage] || getMainImage(car)} alt={car.title} />
+          <img src={car.images?.[activeImage] || getMainImage(car)} alt={car.title} loading="eager" decoding="async" fetchPriority="high" />
           <div className={`statusBadge detailBadge ${STATUS_CLASS[car.status]}`}>{STATUS_LABEL[car.status]}</div>
         </div>
 
@@ -662,7 +691,7 @@ function CarDetail({ car, onClose, setToast }) {
           <div className="thumbRow">
             {car.images.map((img, index) => (
               <button key={img} type="button" className={activeImage === index ? 'activeThumb' : ''} onClick={() => setActiveImage(index)}>
-                <img src={img} alt={`${car.title} รูปที่ ${index + 1}`} />
+                <img src={img} alt={`${car.title} รูปที่ ${index + 1}`} loading="lazy" decoding="async" />
               </button>
             ))}
           </div>
@@ -741,7 +770,7 @@ const ShareCard = React.forwardRef(function ShareCard({ car, carUrl }, ref) {
         </div>
       </div>
 
-      <img className="shareImage" src={getMainImage(car)} alt={car.title} crossOrigin="anonymous" />
+      <img className="shareImage" src={getMainImage(car)} alt={car.title} crossOrigin="anonymous" loading="eager" decoding="async" />
 
       <div className="shareBody">
         <h3>{car.title}</h3>
